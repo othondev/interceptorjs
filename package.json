@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/othondev/interceptorjs#readme",
   "devDependencies": {
-    "axios": "^0.18.0",
     "chai": "^4.1.2",
     "sinon": "^6.1.4"
   }
