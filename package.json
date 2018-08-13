@@ -1,5 +1,5 @@
 {
-  "name": "interceptorjs",
+  "name": "@othon/interceptorjs",
   "version": "1.0.0",
   "description": "The simple module to interceptor method",
   "main": "index.js",
