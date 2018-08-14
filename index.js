@@ -1,17 +1,24 @@
 const {promisify} = require('util')
 
-exports.interceptor = (instance,methodsRegex,{beforeFn=[],afterFn=[]}=functions)=>{
-  const isArrayObject = obj => Object.prototype.toString.call(obj) === '[object Array]'
-  const isFunction = fn => Object.prototype.toString.call(fn) === '[object Function]'
-  const makeRegexString = (accumulator, currentValue) => `$(accumulator)|$(currentValue)`
-  const makeArray = fn => isArrayObject(fn) ? fn : [fn]
+const isArrayObject = obj => Object.prototype.toString.call(obj) === '[object Array]'
 
-  methodsRegex = makeArray(methodsRegex)
-  matchMethod = Object.keys(instance)
-    .filter(i => isFunction(i))
-    .filter(i => methodsRegex.includes(i))
+const compileRegex = methodsRegex =>{
+  const regex = methodsRegex.reduce((accumulator, currentValue) => `${accumulator}|${currentValue}`)
+  return new RegExp(`^(${regex})$`)
+}
+
+const makeArray = fn => isArrayObject(fn) ? fn : [fn]
+
+exports.interceptor = (instance,methodsRegex,{beforeFn=[],afterFn=[]}=functions)=>{
+
   beforeFn = makeArray(beforeFn)
   afterFn = makeArray(afterFn)
+  methodsRegex = makeArray(methodsRegex)
+
+  const regex = compileRegex(methodsRegex)
+
+  const matchMethod = Object.keys(instance)
+  .filter(i => regex.test(i))
 
   matchMethod.forEach(async method =>{
     const originalMethodPromise = promisify(instance[method])

@@ -16,7 +16,7 @@ describe('Test call method',()=>{
 
     const sumAge = moduleTest.sumAge(20,25)
     assert(sumAge === 45, `sumAge is not ${sumAge}`)
-    assert(beforeFn.called)
+    assert(beforeFn.called,'beforeFn is not called')
   })
 
   it('Should be call one before interceptor method',()=>{
@@ -24,7 +24,7 @@ describe('Test call method',()=>{
     interceptor(moduleTest,'rememberMyName',{beforeFn})
     const result = moduleTest.rememberMyName('Jon','Norris')
 
-    assert(beforeFn.called)
+    assert(beforeFn.called,'beforeFn is not called')
     assert(result === 'Jon Norris', `${result} is not Jon Norris`)
   })
 
@@ -37,10 +37,21 @@ describe('Test call method',()=>{
     interceptor(moduleTest,'rememberMyName',{beforeFn:arrayBefore})
     const result = moduleTest.rememberMyName('Jon','Norris')
 
-    assert(beforeFn1.called)
-    assert(beforeFn2.called)
-    assert(beforeFn3.called)
+    assert(beforeFn1.called,'beforeFn1 is not called')
+    assert(beforeFn2.called,'beforeFn2 is not called')
+    assert(beforeFn3.called,'beforeFn3 is not called')
     assert(result === 'Jon Norris', `${result} is not Jon Norris`)
+
+  })
+
+  it('Should be call before trigger on all methods',()=>{
+    const beforeFn1 = spy()
+
+    interceptor(moduleTest,'.*',{beforeFn:beforeFn1})
+    const result = moduleTest.rememberMyName('Jon','Norris')
+    const resultSum = moduleTest.sumAge(1,2,3)
+
+    assert(beforeFn1.calledTwice)
 
   })
 })
