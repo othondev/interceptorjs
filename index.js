@@ -1,5 +1,3 @@
-const {promisify} = require('util')
-
 const isArrayObject = obj => Object.prototype.toString.call(obj) === '[object Array]'
 
 const compileRegex = methodsRegex =>{
@@ -20,14 +18,13 @@ exports.interceptor = (instance,methodsRegex,{beforeFn=[],afterFn=[]}=functions)
   const matchMethod = Object.keys(instance)
   .filter(i => regex.test(i))
 
-  matchMethod.forEach(async method =>{
-    const originalMethodPromise = promisify(instance[method])
-
-    beforeFn.forEach(fn=>fn.apply(instance))
-    const resultOriginalFunc = await originalMethodPromise()
-    afterFn.forEach(fn=>fn.call(instance))
-
-  })
-
-
+    matchMethod.forEach(async method =>{
+      const originalMethodPromise = instance[method]
+      instance[method] = (...args)=>{
+        beforeFn.forEach(fn=>fn.apply(instance))
+        const resultOriginalFunc = originalMethodPromise.apply(instance,args)
+        afterFn.forEach(fn=>fn.call(instance))
+        return resultOriginalFunc
+      }
+    })
 }
