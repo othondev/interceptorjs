@@ -17,6 +17,7 @@ exports.interceptor = (instance,methodsRegex,{beforeFn=[],afterFn=[]}=functions)
 
   const matchMethod = Object.keys(instance)
   .filter(i => regex.test(i))
+  .filter(i => !!i)
 
     matchMethod.forEach(async method =>{
       const originalMethodPromise = instance[method]
