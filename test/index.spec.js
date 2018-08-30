@@ -54,4 +54,13 @@ describe('Test call method',()=>{
     assert(beforeFn1.calledTwice)
 
   })
+
+  it('Should trigger only methodA and methodB',()=>{
+    const beforeFn1 = spy()
+    interceptor(moduleTest,'methodA|methodB',{beforeFn:beforeFn1})
+    moduleTest.methodA()
+    moduleTest.methodB()
+    assert(beforeFn1.calledTwice)
+  })
+
 })
